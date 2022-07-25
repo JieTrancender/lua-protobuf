@@ -1636,17 +1636,14 @@ static void lpbE_repeated(lpb_Env *e, const pb_Field *f) {
     int i;
     lpb_checktable(L, f);
     if (f->packed) {
-        size_t len, bufflen = pb_bufflen(b);
+        size_t len;
         pb_addvarint32(b, pb_pair(f->number, PB_TBYTES));
         len = pb_bufflen(b);
         for (i = 1; lua53_rawgeti(L, -1, i) != LUA_TNIL; ++i) {
             lpbE_field(e, f, NULL);
             lua_pop(L, 1);
         }
-        if (i == 1)
-            pb_bufflen(b) = bufflen;
-        else
-            lpb_addlength(L, b, len);
+        lpb_addlength(L, b, len);
     } else {
         for (i = 1; lua53_rawgeti(L, -1, i) != LUA_TNIL; ++i) {
             lpbE_tagfield(e, f, 0);
